@@ -1,8 +1,8 @@
-# Dieses Programm dient der Implementierung der Raumpläne für die Datenbank.
+# Dieses Programm dient der Implementierung der Raumpläne als csv-Datei für die Datenbank.
 
 import pandas as pd
 
-def raumplan_einlesen(raum):
+def raumplan_einlesen_csv(raum):
     dateiname = str(raum) + ".csv"
     try:
         raumplan = pd.read_csv(dateiname, sep=';', on_bad_lines='skip')
@@ -36,10 +36,10 @@ def raumplan_dozentenplan(raumplan):
     return dozentenplan
 
 
-class Raumplaene:
+class Raumplaene_csv:
     def __init__(self, raum):
         self.raum = raum
-        self.raumplan = raumplan_einlesen(raum)
+        self.raumplan = raumplan_einlesen_csv(raum)
         self.datum = raumplan_datum(self.raumplan)
         self.beginn = raumplan_beginn(self.raumplan)
         self.ende = raumplan_ende(self.raumplan)
@@ -60,4 +60,4 @@ class Raumplaene:
         for i in range(0,len(self.datum)):
             print(f"Am {self.datum[i]} von {self.beginn[i]} bis {self.ende[i]} Uhr ist der Raum {self.raum} belegt.")
 
-Raumplaene("A067").raumplan_bibliothek()
+Raumplaene_csv("A067").raumplan_bibliothek()
