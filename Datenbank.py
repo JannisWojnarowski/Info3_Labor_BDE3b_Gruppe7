@@ -48,16 +48,18 @@ raumh103.get_Raumplaene = Mock(return_value = {'28.08.2024': [['16:00', '17:00',
 '17.01.2025': [['15:00', '18:00', 'MAP Proj.präsentationen I+II']]}
 )
 
-raumplanh103 = raumh103.get_Raumplaene()
+cursor.execute("DROP TABLE IF EXISTS Raeume")
+cursor.execute("CREATE TABLE Raeume (RaumID int(2), Raumname VARCHAR(4))")
 
-for raumname in raeume:
-    cursor.execute("INSERT IGNORE INTO Raeume (Raumname) VALUES (raumname)")
+for raumname, raumid in raeume.items():
+    cursor.execute("INSERT INTO Raeume (RaumID, Raumname) VALUES (%s,%s)", (raumid,raumname))
 
 # Tabelle für jeden Raum erstellen und Daten einfügen
 for raumname, raumid in raeume.items():
     # Tabelle für den Raum erstellen
-    cursor.execute(f"CREATE TABLE IF NOT EXISTS {raumname} (Datum VARCHAR(12), Beginn VARCHAR(5), Ende VARCHAR(5), Veranstaltung_Dozent VARCHAR(255))")
-    raumplanh103 = raumh103.get_Raumplaene()
-    for tage in raumplanh103:
-        cursor.execute(f"INSERT INTO {raumname} (Datum, Beginn, Ende, Veranstaltung_Dozent) VALUES ('{tage}', '{raumh103.get_Raumplaene[tage][0][0]}', '{raumh103.get_Raumplaene[tage][0][1]}', '{raumh103.get_Raumplaene[tage][0][2]}')")
+    cursor.execute(f"CREATE TABLE IF NOT EXISTS {raumname} (Datum DATE, Beginn TIME, Ende TIME, Veranstaltung_Dozent VARCHAR(255))")
+    for tage in raumh103.get_Raumplaene():
+        cursor.execute(f"INSERT INTO {raumname} (Datum, Beginn, Ende, Veranstaltung_Dozent) VALUES ('{tage}', '{raumh103.get_Raumplaene()[tage][0][0]}', '{raumh103.get_Raumplaene()[tage][0][1]}', '{raumh103.get_Raumplaene()[tage][0][2]}')")
+
+
 
